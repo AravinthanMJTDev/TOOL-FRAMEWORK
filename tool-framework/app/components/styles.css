@@ -1,25 +1,68 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+.main {
+  /* background-color: rgb(255, 255, 255); */
+  background-color: rgba(255, 255, 255, 0.705);
+  font-family: "poppins", sans-serif;
+  font-display: var(--font-poppins);
+  color: rgb(31, 35, 40);
+  color-scheme: light;
+}
+.header {
+  background-color: rgba(255, 255, 255, 0.822);
+}
+.navigation {
+  background-color: rgba(255, 255, 255, 0.822);
+  box-shadow: 0px 0px 10px 10px rgb(243, 243, 243);
+}
+.contentBg {
+  background-color: rgba(255, 255, 255, 0.822);
+  box-shadow: 0px 0px 10px 10px rgb(243, 243, 243);
+}
 .blocks {
   background-color: rgb(238, 236, 236);
 }
 .graph {
-  background-color: dimgray;
+  background-color: rgba(255, 255, 255, 0.884);
 }
 .otherComponent {
-  background-color: rgb(167, 167, 167);
+  background-color: rgba(252, 252, 252, 0.945);
   height: 30%;
+  border-radius: 25%;
+  box-shadow: 0px 0px 10px 10px rgb(255, 255, 255);
 }
-.contentBg {
-  background-color: #f1f1f1;
-}
-.highcharts-container {
-  height: 50%;
-  width: 50%;
-}
-/* @media (min-width: 640px) {
-  .highcharts {
-    height: 50%;
-  }
-} */
+
 Link {
   width: inherit;
   height: inherit;
@@ -28,6 +71,7 @@ ul {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  height: 100%;
   text-align: center;
   align-items: center;
 }

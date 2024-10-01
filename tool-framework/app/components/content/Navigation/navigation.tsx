@@ -1,27 +1,59 @@
+import classNames from "classnames";
 import Link from "next/link";
+import styles from "./styles";
 
 const Navigation = ({ className }: { className: string }) => {
   return (
     <ul className={className}>
-      <Link href="/components/DashBoard">
+      <Link
+        className={classNames(styles.linkContainer)}
+        href="/components/DashBoard"
+      >
         <li>Dashboard</li>
       </Link>
-      <Link href="/components/WorkOrder">
+      <Link
+        className={classNames(styles.linkContainer)}
+        href="/components/WorkOrder"
+      >
         <li>Workorder</li>
       </Link>
-      <Link href="/components/ProductionApproval">
+      <Link
+        className={classNames(styles.linkContainer)}
+        href="/components/WorkOrder2"
+      >
+        <li>Workorder2</li>
+      </Link>
+      <Link
+        className={classNames(styles.linkContainer)}
+        href="/components/ProductionApproval"
+      >
         {" "}
         <li>Production Approval</li>
       </Link>
-      <Link href="/components/QualityApproval">
+      <Link
+        className={classNames(styles.linkContainer)}
+        href="/components/QualityApproval"
+      >
         <li>Quality Approval</li>
       </Link>
-      <Link href="/components/TotalRoom">
+      <Link
+        className={classNames(styles.linkContainer)}
+        href="/components/TotalRoom"
+      >
         <li>Total Room</li>
       </Link>
 
-      <Link href="/components/ToolLife">
+      <Link
+        className={classNames(styles.linkContainer)}
+        href="/components/ToolLife"
+      >
         <li>Tool Life</li>
+      </Link>
+      <Link
+        className={classNames(styles.linkContainer)}
+        href="/components/Settings/VerificationPage"
+      >
+        <li>Settings</li>
       </Link>
     </ul>
   );

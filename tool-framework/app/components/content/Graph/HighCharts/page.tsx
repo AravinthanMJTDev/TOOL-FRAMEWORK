@@ -8,7 +8,9 @@ export const HighChart = () => {
     chart: {
       type: "column",
       zoomType: "xy",
-      backgroundColor: "rgba(0, 0, 0,0)",
+      backgroundColor: "rgba(0, 0, 0, 0)",
+      height: null, // ensure it takes full height of container
+      width: null, // ensure it takes full width of container
     },
     credits: {
       enabled: false,
@@ -70,9 +72,14 @@ export const HighChart = () => {
   };
 
   return (
-    <div className=" sm:h-[40%] sm:w-[40%]">
-      <HighchartsReact highcharts={Highcharts} options={options} />
+    <div className="h-full w-full">
+      <HighchartsReact
+        highcharts={Highcharts}
+        options={options}
+        containerProps={{
+          style: { height: "100%", width: "100%" },
+        }}
+      />
     </div>
   );
 };
-export default HighChart;
