@@ -1,16 +1,9 @@
 import Main from "../Layout/Main";
-import OtherContent from "../content/otherContent/otherContent";
-import Status from "../content/status/status";
+import OtherContent from "./otherContent/otherContent";
+import Status from "./status/status";
 import { HighChart } from "../content/Graph/HighCharts/page";
-import Link from "next/link";
-// import { StatusData } from "../Data/page";
-// interface statusProps {
-//   status: string;
-//   color: string;
-//   percentage: string;
-// }
+
 const Page = () => {
-  // const status = StatusData;
   return (
     <Main>
       <div className="w-full flex flex-col h-[100%] ">
@@ -19,16 +12,16 @@ const Page = () => {
         </div>
         <div className="flex flex-col sm:flex-row gap-3 m-5">
           <div className="w-full grid grid-cols-1 sm:grid-cols-2 gap-4 flex-wrap">
-            <div className="min-h-[40%] w-full rounded-lg shadow-xl">
+            <div className="min-h-[40%] w-full p-5 contentBg rounded-lg boxShadow">
               <HighChart />
             </div>
-            <div className="min-h-[40%] w-full rounded-lg shadow-xl">
+            <div className="min-h-[40%] w-full p-5 contentBg rounded-lg boxShadow">
               <HighChart />
             </div>
-            <div className="min-h-[40%] w-full rounded-lg shadow-xl">
+            <div className="min-h-[40%] w-full p-5 contentBg rounded-lg boxShadow">
               <HighChart />
             </div>
-            <div className="min-h-[40%] w-full rounded-lg shadow-xl">
+            <div className="min-h-[40%] w-full p-5 contentBg rounded-lg boxShadow">
               <HighChart />
             </div>
           </div>

@@ -8,7 +8,7 @@ const Status = () => {
     <div className={classNames(styles.body)}>
       <Link
         className={classNames(styles.container)}
-        href={`/components/content/status/Accepted`}
+        href={`/components/DashBoard/status/Accepted`}
       >
         <div className={classNames(styles.box)}>
           <div className={classNames(styles.boxValue, "text-[#007FFF]")}>
@@ -29,7 +29,7 @@ const Status = () => {
       </Link>
       <Link
         className={classNames(styles.container)}
-        href={`/components/content/status/Completed`}
+        href={`/components/DashBoard/status/Completed`}
       >
         <div className={classNames(styles.box)}>
           <div className={classNames(styles.boxValue, "text-[#20B2AA]")}>
@@ -50,7 +50,7 @@ const Status = () => {
       </Link>
       <Link
         className={classNames(styles.container)}
-        href={`/components/content/status/OnHold`}
+        href={`/components/DashBoard/status/OnHold`}
       >
         <div className={classNames(styles.box)}>
           <div className={classNames(styles.boxValue, "text-[red]")}>38</div>
@@ -67,7 +67,7 @@ const Status = () => {
       </Link>
       <Link
         className={classNames(styles.container)}
-        href={`/components/content/status/Open`}
+        href={`/components/DashBoard/status/Open`}
       >
         <div className={classNames(styles.box)}>
           <div className={classNames(styles.boxValue, "text-[#00CCFF]")}>

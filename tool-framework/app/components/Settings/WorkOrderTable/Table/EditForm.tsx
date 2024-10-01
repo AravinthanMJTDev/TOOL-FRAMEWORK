@@ -86,10 +86,7 @@ const EditForm: React.FC<EditFormProps> = ({ id, onClose, setUsers }) => {
   }
 
   return (
-    <PopupForm onClose={onClose}>
-      <div className="text-white bg-blue-600 text-center text-lg py-3 mt-5 mb-4 font-semibold">
-        Edit User
-      </div>
+    <PopupForm onClose={onClose} title={"Edit User"}>
       <form onSubmit={handleSubmit} className="space-y-4 mt-5">
         <div className="flex items-center">
           <label className="w-1/3 text-right pr-4">Name:</label>

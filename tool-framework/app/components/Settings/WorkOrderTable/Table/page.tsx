@@ -339,7 +339,7 @@ export default function TicketDashboard({ usersDB }: { usersDB: UserDB }) {
             </Dropdown>
 
             <Button endContent={<PlusIcon />} onClick={() => setPopup(true)}>
-              Add New
+              Add New Part
             </Button>
             <Button
               startContent={<Trash2Icon />}

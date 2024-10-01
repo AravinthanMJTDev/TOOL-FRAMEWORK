@@ -9,11 +9,11 @@ const Main = ({ children }: { children: ReactElement }) => {
     <div className="main  flex flex-col  h-[100%] w-[100%] md:w-[1/2] mx-auto  m-10">
       <Header />
       <div className="w-full gap-2 flex flex-row  mt-4 text-wrap h-[80%]">
-        <div className="navigation hidden sm:flex w-[20%] h-[100%] flex-col items-center ">
-          <Navigation className="w-full  mt-14  h-[100%]" />
+        <div className="navigation boxShadow hidden sm:flex w-[20%] h-[100%] flex-col items-center ">
+          <Navigation className="w-full  mt-14  h-[100%] " />
         </div>
         {/* BACKGROUND COLOR IN STYLE.CSS */}
-        <div className=" w-full contentBg flex  rounded-t-lg sm:p-10 overflow-auto">
+        <div className=" w-full contentBg boxShadow flex  rounded-t-lg sm:p-10 overflow-auto">
           {children}
         </div>
 

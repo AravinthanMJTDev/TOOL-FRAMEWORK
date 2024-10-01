@@ -24,7 +24,7 @@ const Popup: React.FC<PopupProps> = ({ onClose, setUsers }) => {
     password: "",
     rePassword: "",
   });
-
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [passwordMatch, setPasswordMatch] = useState(true); // State to track if passwords match
   const [image, setImage] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
@@ -64,13 +64,29 @@ const Popup: React.FC<PopupProps> = ({ onClose, setUsers }) => {
       );
     }
   };
+  const validateForm = () => {
+    const newErrors: { [key: string]: string } = {};
+    if (!formData.name) newErrors.name = "Name is required.";
+    if (!formData.employeeid) newErrors.employeeid = "Employee ID is required.";
+    if (!formData.department) newErrors.department = "Department is required.";
+    if (!formData.mobilenumber)
+      newErrors.mobilenumber = "Mobile number is required.";
+    if (!formData.email) newErrors.email = "Email is required.";
+    if (!formData.password) newErrors.password = "Password is required.";
+    if (!formData.rePassword)
+      newErrors.rePassword = "Re-enter password is required.";
+    if (!passwordMatch) newErrors.password = "Passwords do not match.";
+    console.log("error ", newErrors);
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!passwordMatch) {
-      alert("Passwords do not match!");
+    if (!validateForm()) {
       return;
     }
+
     setUsers((prevUsers) => [...prevUsers, formData]);
     usersDB.push(formData);
     onClose();
@@ -102,9 +118,13 @@ const Popup: React.FC<PopupProps> = ({ onClose, setUsers }) => {
             className="w-2/3 border border-gray-300 p-2 rounded"
             value={formData.name}
             onChange={handleChange}
-            required
-          />
+          />{" "}
         </div>
+        {errors.name && (
+          <p className="text-red-500 text-lg text-center -mt-2 font-bold">
+            {errors.name}
+          </p>
+        )}
         {/* Employee ID */}
         <div className="flex items-center">
           <label className="w-1/3 text-right pr-4">
@@ -116,27 +136,34 @@ const Popup: React.FC<PopupProps> = ({ onClose, setUsers }) => {
             className="w-2/3 border border-gray-300 p-2 rounded"
             value={formData.employeeid}
             onChange={handleChange}
-            required
           />
         </div>{" "}
+        {errors.employeeid && (
+          <p className="text-red-500 text-lg text-center -mt-2 font-bold">
+            {errors.employeeid}
+          </p>
+        )}
         {/* Department No */}
         <div className="flex items-center">
           <label className="w-1/3 text-right pr-4">
             Department:<span className="text-red-500"> *</span>
           </label>
-
           <select
             id="department"
             className="w-2/3 border border-gray-300 p-2 rounded"
             value={formData.department}
             onChange={handleChange} // Now the handleChange will work properly
-            required
           >
             <option value="">Select Department</option>
             <option value="Admin">Admin</option>
             <option value="Supervisor">Supervisor</option>
-          </select>
+          </select>{" "}
         </div>
+        {errors.department && (
+          <p className="text-red-500 text-lg text-center -mt-2 font-bold">
+            {errors.department}
+          </p>
+        )}
         {/* Mobile No */}
         <div className="flex items-center">
           <label className="w-1/3 text-right pr-4">
@@ -148,9 +175,13 @@ const Popup: React.FC<PopupProps> = ({ onClose, setUsers }) => {
             className="w-2/3 border border-gray-300 p-2 rounded"
             value={formData.mobilenumber}
             onChange={handleChange}
-            required
-          />
+          />{" "}
         </div>
+        {errors.mobilenumber && (
+          <p className="text-red-500 text-lg text-center -mt-2 font-bold">
+            {errors.mobilenumber}
+          </p>
+        )}
         {/* Email */}
         <div className="flex items-center">
           <label className="w-1/3 text-right pr-4">
@@ -162,9 +193,13 @@ const Popup: React.FC<PopupProps> = ({ onClose, setUsers }) => {
             className="w-2/3 border border-gray-300 p-2 rounded"
             value={formData.email}
             onChange={handleChange}
-            required
-          />
+          />{" "}
         </div>
+        {errors.email && (
+          <p className="text-red-500 text-lg text-center -mt-2 font-bold">
+            {errors.email}
+          </p>
+        )}
         {/* Password Field */}
         <div className="flex items-center">
           <label className="w-1/3 text-right pr-4">
@@ -176,9 +211,13 @@ const Popup: React.FC<PopupProps> = ({ onClose, setUsers }) => {
             className="w-2/3 border border-gray-300 p-2 rounded"
             value={formData.password}
             onChange={handleChange}
-            required
-          />
+          />{" "}
         </div>
+        {errors.password && (
+          <p className="text-red-500 text-lg text-center -mt-2 font-bold">
+            {errors.password}
+          </p>
+        )}
         {/* Re-enter Password */}
         <div className="flex items-center">
           <label className="w-1/3 text-right pr-4">
@@ -190,9 +229,13 @@ const Popup: React.FC<PopupProps> = ({ onClose, setUsers }) => {
             className="w-2/3 border border-gray-300 p-2 rounded"
             value={formData.rePassword}
             onChange={handleChange}
-            required
           />
         </div>
+        {errors.rePassword && (
+          <p className="text-red-500 text-lg text-center -mt-2 font-bold">
+            {errors.rePassword}
+          </p>
+        )}
         {/* Password Match Warning */}
         {!passwordMatch && (
           <div className="text-red-500 text-center">
@@ -201,9 +244,7 @@ const Popup: React.FC<PopupProps> = ({ onClose, setUsers }) => {
         )}
         {/* Image Upload */}
         <div className="flex items-center">
-          <label className="w-1/3 text-right pr-4">
-            Photo:<span className="text-red-500"> *</span>
-          </label>
+          <label className="w-1/3 text-right pr-4">Photo:</label>
           <div className="w-2/3 flex flex-col space-y-2">
             <input
               id="imageUpload"
@@ -239,9 +280,7 @@ const Popup: React.FC<PopupProps> = ({ onClose, setUsers }) => {
         </div>
         {/* Signature Upload */}
         <div className="flex items-center">
-          <label className="w-1/3 text-right pr-4">
-            Signature:<span className="text-red-500"> *</span>
-          </label>
+          <label className="w-1/3 text-right pr-4">Signature:</label>
           <div className="w-2/3 flex flex-col space-y-2">
             <input
               id="signUpload"
