@@ -23,17 +23,22 @@ import { columns } from "../../../Data/SettingsWorkOrderData/page";
 import {
   ChevronDownIcon,
   Ellipsis,
+  FileUp,
   Filter,
+  Import,
   Menu,
   PlusIcon,
   SearchIcon,
   Trash2Icon,
   X,
 } from "lucide-react";
-
+import { saveAs } from "file-saver";
+import * as XLSX from "xlsx";
 import EditForm from "./EditForm";
 import { UserDB } from "../types";
-import CreateNewWorkOrder from "./createNewWorkOrder";
+
+import Popup from "../AddUser/page";
+import AddUser from "./addUser";
 
 const INITIAL_VISIBLE_COLUMNS = [
   "employeeid",
@@ -67,7 +72,7 @@ export default function TicketDashboard({ usersDB }: { usersDB: UserDB }) {
   const hasSearchFilter = Boolean(filterValue);
   const [menuExpand, setMenuExpand] = useState(false);
   const [editForm, setEditForm] = useState(0);
-  console.log(typeof editForm);
+  const [importedData, setImportedData] = useState<UserDB[]>([]);
 
   useEffect(() => {
     setUsers(usersDB);
@@ -81,6 +86,12 @@ export default function TicketDashboard({ usersDB }: { usersDB: UserDB }) {
     );
   }, [visibleColumns]);
 
+  useEffect(() => {
+    if (importedData.length) {
+      setUsers(importedData);
+    }
+  }, [importedData]);
+
   const filteredItems = React.useMemo(() => {
     let filteredUsers = [...users];
     // console.log(statusFilter);
@@ -89,14 +100,7 @@ export default function TicketDashboard({ usersDB }: { usersDB: UserDB }) {
         user.name.toLowerCase().includes(filterValue.toLowerCase())
       );
     }
-    // if (
-    //   statusFilter !== "all" &&
-    //   Array.from(statusFilter).length !== statusOptions.length
-    // ) {
-    //   filteredUsers = filteredUsers.filter((user) =>
-    //     Array.from(statusFilter).includes(user.status.toLowerCase())
-    //   );
-    // }
+
     console.log(filteredUsers);
     return filteredUsers;
   }, [users, hasSearchFilter, filterValue]);
@@ -246,15 +250,68 @@ export default function TicketDashboard({ usersDB }: { usersDB: UserDB }) {
     return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
   };
 
+  // --------------------------------------------------------------------------EXPORT/IMPORT Excel format----------------------------------------------------------------------
+  // Handle Export
+
+  const exportToExcel = (data, fileName) => {
+    const worksheet = XLSX.utils.json_to_sheet(data); // Convert JSON data to Excel format
+    const workbook = XLSX.utils.book_new(); // Create a new workbook
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1"); // Add worksheet to workbook
+
+    XLSX.writeFile(workbook, `${fileName}.xlsx`); // Export the workbook
+  };
+
+  const handleExport = () => {
+    exportToExcel(users, "UsersData");
+  };
+
+  // handle import
+
+  const importFromExcel = (event) => {
+    const file = event.target.files[0]; // Get the selected file
+    const reader = new FileReader();
+
+    reader.onload = (e) => {
+      const data = new Uint8Array(e.target.result); // Read file data
+      const workbook = XLSX.read(data, { type: "array" }); // Parse the Excel file
+
+      const sheetName = workbook.SheetNames[0]; // Get the first sheet
+      const worksheet = workbook.Sheets[sheetName]; // Get the worksheet
+      const importedData = XLSX.utils.sheet_to_json(worksheet, {
+        raw: false, //ensures that dates arent parsed as serial num
+        dateNF: "yyyy-mm-dd", // format date as string
+      }); // Convert worksheet to JSON
+      console.log("file", importedData);
+
+      // Column verification
+      // Convert the sheet to JSON to work with the data
+      const sheetData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+      const headers = sheetData[0]; // The first row will contain the headers
+      const expectedHeaders = columns.map((column) => column.uid);
+      const isValid = expectedHeaders
+        .filter((header) => header !== "actions")
+        .every((header) => headers.includes(header));
+      if (isValid) {
+        setUsers(importedData);
+      } else {
+        alert("ivalid file");
+      }
+    };
+
+    reader.readAsArrayBuffer(file); // Read the file as an array buffer
+  };
+  const handleImport = (e) => {
+    importFromExcel(e);
+  };
   // TOP CONTENT
 
   const topContent = React.useMemo(() => {
     return (
       <div className=" flex flex-col gap-4   transition-all duration-1000 ease-in-out overflow-x-auto">
         <div className=" flex  justify-between gap-3 items-center  ">
-          <p className="hidden sm:flex text-sm font-semibold">
+          {/* <p className="hidden sm:flex text-sm font-semibold">
             Unsolved Tickets
-          </p>
+          </p> */}
           <Input
             isClearable
             className="min-w-[40%] sm:w-[10%]"
@@ -295,7 +352,9 @@ export default function TicketDashboard({ usersDB }: { usersDB: UserDB }) {
                     ))}
                   </DropdownMenu>
                 </Dropdown>
-
+                <Button>
+                  <FileUp />
+                </Button>
                 <Button onClick={() => setPopup(true)} className="w-full">
                   Add New
                 </Button>
@@ -312,6 +371,29 @@ export default function TicketDashboard({ usersDB }: { usersDB: UserDB }) {
 
           {/* MEDIUM SCREEN CONTENT */}
           <div className="hidden sm:flex md:flex gap-3">
+            <Button
+              as="label"
+              htmlFor="import"
+              variant="flat"
+              className="rounded-full p-0"
+            >
+              <input
+                id="import"
+                type="file"
+                accept=".xlsx, .xls"
+                onChange={handleImport}
+                className="hidden"
+              />
+              <Import />
+            </Button>
+
+            <Button
+              onClick={handleExport}
+              variant="flat"
+              className="rounded-full p-0 w-auto"
+            >
+              <FileUp />
+            </Button>
             <Dropdown>
               <DropdownTrigger className="hidden sm:flex">
                 <Button
@@ -339,7 +421,7 @@ export default function TicketDashboard({ usersDB }: { usersDB: UserDB }) {
             </Dropdown>
 
             <Button endContent={<PlusIcon />} onClick={() => setPopup(true)}>
-              Add New Part
+              New
             </Button>
             <Button
               startContent={<Trash2Icon />}
@@ -358,7 +440,8 @@ export default function TicketDashboard({ usersDB }: { usersDB: UserDB }) {
           //   priorityColor={priorityColor}
           //   setUsers={setUsers}
           // />
-          <CreateNewWorkOrder onClose={() => setPopup(false)} />
+          // <CreateNewWorkOrder onClose={() => setPopup(false)} />
+          <AddUser onClose={() => setPopup(false)} setUsers={setUsers} />
         )}
         {editForm > 0 && (
           <EditForm

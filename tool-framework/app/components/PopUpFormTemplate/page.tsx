@@ -11,9 +11,9 @@ const PopupForm = ({
   title: string;
 }) => {
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50 ">
-      <div className=" bg-white p-8 rounded shadow-lg   ">
-        <div className="relative bg-blue-600 text-white py-3 mt-5 text-center text-lg mb-4 font-semibold">
+    <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50 z-50">
+      <div className=" relative w-full max-w-lg bg-white rounded-lg shadow-lg p-6  ">
+        <div className="relative w-full text-2xl font-bold text-gray-800 text-center mb-6">
           {" "}
           {title}
           <button

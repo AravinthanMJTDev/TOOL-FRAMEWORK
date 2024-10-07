@@ -10,10 +10,10 @@ const Main = ({ children }: { children: ReactElement }) => {
       <Header />
       <div className="w-full gap-2 flex flex-row  mt-4 text-wrap h-[80%]">
         <div className="navigation boxShadow hidden sm:flex w-[20%] h-[100%] flex-col items-center ">
-          <Navigation className="w-full  mt-14  h-[100%] " />
+          <Navigation className="w-full    h-[100%] " />
         </div>
         {/* BACKGROUND COLOR IN STYLE.CSS */}
-        <div className=" w-full contentBg boxShadow flex  rounded-t-lg sm:p-10 overflow-auto">
+        <div className="w-full sm:w-[80%] contentBg boxShadow flex  rounded-t-lg sm:p-10 overflow-auto">
           {children}
         </div>
 

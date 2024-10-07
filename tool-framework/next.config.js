@@ -16,6 +16,12 @@ const nextConfig = {
       },
       {
         protocol: "https",
+        hostname: "4kwallpapers.com",
+        port: "", // No port needed for HTTPS
+        pathname: "/**", // Allows any path
+      },
+      {
+        protocol: "https",
         hostname: "assets.example.com",
         port: "",
         pathname: "/account123/**",

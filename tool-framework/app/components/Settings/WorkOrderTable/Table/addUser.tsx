@@ -1,5 +1,3 @@
-import React, { useEffect, useState, useMemo } from "react";
-import { UploadCloud, X, Image, ChevronDown } from "lucide-react";
 import {
   Button,
   Dropdown,
@@ -7,64 +5,51 @@ import {
   DropdownMenu,
   DropdownTrigger,
 } from "@nextui-org/react";
+import { ChevronDown, Image, UploadCloud, X } from "lucide-react";
+// Importing Icons
+import React, { useEffect, useState } from "react";
 import { usersDB, Departments } from "../../../Data/SettingsWorkOrderData/page";
-import { UserDB } from "../types";
-import PopupForm from "../../../PopUpFormTemplate/page";
+import { User } from "../Table/page";
+import PopUpForm from "../../../PopUpFormTemplate/page";
 
-interface EditFormProps {
-  id: number;
+interface AddUserProps {
   onClose: () => void;
-  setUsers: React.Dispatch<React.SetStateAction<UserDB[]>>;
+  setUsers: React.Dispatch<React.SetStateAction<User[]>>;
 }
 
-const EditForm: React.FC<EditFormProps> = ({ id, onClose, setUsers }) => {
-  const [user, setUser] = useState<UserDB | null>(null); // Initialize as null to avoid uncontrolled behavior
+const AddUser: React.FC<AddUserProps> = ({ onClose, setUsers }) => {
+  const [formData, setFormData] = useState({
+    id: usersDB.length + 1,
+    employeeid: "",
+    name: "",
+    email: "",
+    mobilenumber: "",
+    sign: "",
+    department: "",
+    age: "",
+    avatar: "",
+    password: "",
+    rePassword: "",
+  });
   const [departments, setDepartments] = useState([]);
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
+  const [passwordMatch, setPasswordMatch] = useState(true);
   const [image, setImage] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(user?.avatar);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [signImage, setSignImage] = useState<File | null>(null);
-  const [signImagePreview, setSignImagePreview] = useState<string | null>(
-    user?.sign
-  );
+  const [signImagePreview, setSignImagePreview] = useState<string | null>(null);
 
   useEffect(() => {
-    const foundUser = usersDB.find((userFromDb) => userFromDb.id === id);
-    if (foundUser) {
-      setUser(foundUser);
-      setDepartments(Departments);
-    } else {
-      console.error("User not found");
-    }
-  }, [id]);
-
-  const capitalize = (str: string) =>
-    str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { id, value } = e.target;
-    setUser((prev) => (prev ? { ...prev, [id]: value } : null));
-  };
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (user) {
-      const updatedUsersDB = usersDB.map((existingUser) =>
-        existingUser.id === id ? { ...existingUser, ...user } : existingUser
-      );
-
-      setUsers(updatedUsersDB); // This will update the parent component's state
-      console.log("Form data submitted:", user);
-      onClose(); // Close the form
-    }
-  };
-
+    setDepartments(Departments);
+  }, []);
+  console.log(departments);
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       const imageURL = URL.createObjectURL(file);
       setImage(file);
       setImagePreview(imageURL);
-      setUser((prev) => ({ ...prev, avatar: imageURL }));
+      setFormData((prev) => ({ ...prev, avatar: imageURL }));
     }
   };
 
@@ -74,27 +59,59 @@ const EditForm: React.FC<EditFormProps> = ({ id, onClose, setUsers }) => {
       const imageURL = URL.createObjectURL(file);
       setSignImage(file);
       setSignImagePreview(imageURL);
-      setUser((prev) => ({ ...prev, sign: imageURL }));
+      setFormData((prev) => ({ ...prev, sign: imageURL }));
     }
   };
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = e.target;
+    setFormData((prev) => ({ ...prev, [id]: value }));
+    // if (id === "password" || id === "rePassword") {
+    //   setPasswordMatch(
+    //     id === "password"
+    //       ? value === formData.rePassword
+    //       : value === formData.password
+    //   );
+    // }
+  };
+
+  const validateForm = () => {
+    const newErrors: { [key: string]: string } = {};
+    if (!formData.name) newErrors.name = "Name is required.";
+    if (!formData.employeeid) newErrors.employeeid = "Employee ID is required.";
+    if (!formData.department) newErrors.department = "Department is required.";
+    if (!formData.mobilenumber)
+      newErrors.mobilenumber = "Mobile number is required.";
+    if (!formData.email) newErrors.email = "Email is required.";
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!validateForm()) {
+      return;
+    }
+    setUsers((prevUsers) => [...prevUsers, formData]);
+    usersDB.push(formData);
+    onClose();
+  };
+
   const handleCancelImage = () => {
     setImage(null);
     setImagePreview(null);
-    setUser((prev) => ({ ...prev, avatar: "" }));
+    setFormData((prev) => ({ ...prev, avatar: "" }));
   };
 
   const handleCancelSignImage = () => {
     setSignImage(null);
     setSignImagePreview(null);
-    setUser((prev) => ({ ...prev, sign: "" }));
+    setFormData((prev) => ({ ...prev, sign: "" }));
   };
 
-  if (!user) {
-    return null; // Prevent rendering if user is null (loading state)
-  }
-
   return (
-    <PopupForm title={"Edit User"} onClose={onClose}>
+    <PopUpForm title={"Create User"} onClose={onClose}>
       <div className="max-h-[700px] overflow-y-auto">
         {" "}
         {/* Popup max height */}
@@ -110,10 +127,13 @@ const EditForm: React.FC<EditFormProps> = ({ id, onClose, setUsers }) => {
             <input
               id="employeeid"
               type="text"
-              className="w-full p-1 border border-gray-300 rounded-md text-gray-500 text-sm"
-              value={user["employeeid"]}
+              className="w-full p-1 border border-gray-300 rounded-md text-gray-500"
+              value={formData.employeeid}
               onChange={handleChange}
             />
+            {errors.employeeid && (
+              <p className="text-red-500 text-md">{errors.employeeid}</p>
+            )}
           </div>
 
           {/* Name */}
@@ -127,10 +147,13 @@ const EditForm: React.FC<EditFormProps> = ({ id, onClose, setUsers }) => {
             <input
               id="name"
               type="text"
-              className="w-full p-1 border border-gray-300 rounded-md text-gray-500 text-sm"
-              value={user["name"]}
+              className="w-full p-1 border border-gray-300 rounded-md text-gray-500"
+              value={formData.name}
               onChange={handleChange}
             />
+            {errors.name && (
+              <p className="text-red-500 text-md">{errors.name}</p>
+            )}
           </div>
 
           {/* Email */}
@@ -144,10 +167,13 @@ const EditForm: React.FC<EditFormProps> = ({ id, onClose, setUsers }) => {
             <input
               id="email"
               type="email"
-              className="w-full p-1 border border-gray-300 rounded-md text-gray-500 text-sm"
-              value={user["email"]}
+              className="w-full p-1 border border-gray-300 rounded-md text-gray-500"
+              value={formData.email}
               onChange={handleChange}
             />
+            {errors.email && (
+              <p className="text-red-500 text-md">{errors.email}</p>
+            )}
           </div>
 
           {/* Mobile Number */}
@@ -161,10 +187,13 @@ const EditForm: React.FC<EditFormProps> = ({ id, onClose, setUsers }) => {
             <input
               id="mobilenumber"
               type="text"
-              className="w-full p-1 border border-gray-300 rounded-md text-gray-500 text-sm"
-              value={user["mobilenumber"]}
+              className="w-full p-1 border border-gray-300 rounded-md text-gray-500"
+              value={formData.mobilenumber}
               onChange={handleChange}
             />
+            {errors.mobilenumber && (
+              <p className="text-red-500 text-md">{errors.mobilenumber}</p>
+            )}
           </div>
 
           {/* Department */}
@@ -175,15 +204,16 @@ const EditForm: React.FC<EditFormProps> = ({ id, onClose, setUsers }) => {
             >
               Department<span className="text-red-500"> *</span>
             </label>
+
             <Dropdown>
               <DropdownTrigger>
-                <div className="w-full flex p-1 border border-gray-300 rounded-md justify-between text-gray-500 text-sm">
-                  {user["department"]} <ChevronDown />
+                <div className="w-full flex p-1 border border-gray-300 rounded-md justify-between text-gray-500">
+                  {formData.department} <ChevronDown />
                 </div>
               </DropdownTrigger>
               <DropdownMenu
                 onAction={(key) =>
-                  setUser((prev) => ({
+                  setFormData((prev) => ({
                     ...prev,
                     department: key.toString(),
                   }))
@@ -201,6 +231,7 @@ const EditForm: React.FC<EditFormProps> = ({ id, onClose, setUsers }) => {
               </DropdownMenu>
             </Dropdown>
           </div>
+
           {/* Age */}
           {/* <div className="mb-4">
             <label
@@ -212,14 +243,13 @@ const EditForm: React.FC<EditFormProps> = ({ id, onClose, setUsers }) => {
             <input
               id="age"
               type="number"
-              className="w-full p-1 border border-gray-300 rounded-md text-gray-500 text-sm"
-              value={user["age"]}
+              className="w-full p-1 border border-gray-300 rounded-md"
+              value={formData.age}
               onChange={handleChange}
             />
           </div> */}
 
           {/* Password */}
-
           <div className="mb-4">
             <label
               htmlFor="password"
@@ -230,11 +260,31 @@ const EditForm: React.FC<EditFormProps> = ({ id, onClose, setUsers }) => {
             <input
               id="password"
               type="password"
-              className="w-full p-1 border border-gray-300 rounded-md text-gray-500 text-sm"
-              value={user["password"]}
+              className="w-full p-1 border border-gray-300 rounded-md text-gray-500"
+              value={formData.password}
               onChange={handleChange}
             />
           </div>
+
+          {/* Re-Enter Password */}
+          {/* <div className="mb-4">
+            <label
+              htmlFor="rePassword"
+              className="block text-md font-medium text-gray-700"
+            >
+              Re-Enter Password<span className="text-red-500"> *</span>
+            </label>
+            <input
+              id="rePassword"
+              type="password"
+              className="w-full p-1 border border-gray-300 rounded-md"
+              value={formData.rePassword}
+              onChange={handleChange}
+            />
+            {errors.rePassword && (
+              <p className="text-red-500 text-md">{errors.rePassword}</p>
+            )}
+          </div> */}
 
           {/* Avatar */}
           <div className="mb-4">
@@ -257,7 +307,7 @@ const EditForm: React.FC<EditFormProps> = ({ id, onClose, setUsers }) => {
                 className="cursor-pointer flex items-center space-x-2"
               >
                 <UploadCloud size={24} className="text-blue-500" />
-                <span className="text-blue-500 text-sm">Upload Photo</span>
+                <span className="text-blue-500">Upload Photo</span>
               </label>
               {imagePreview && (
                 <div className="relative">
@@ -299,7 +349,7 @@ const EditForm: React.FC<EditFormProps> = ({ id, onClose, setUsers }) => {
                 className="cursor-pointer flex items-center space-x-2"
               >
                 <Image size={24} className="text-blue-500" />
-                <span className="text-blue-500 text-sm">Upload Signature</span>
+                <span className="text-blue-500">Upload Signature</span>
               </label>
               {signImagePreview && (
                 <div className="relative">
@@ -326,13 +376,15 @@ const EditForm: React.FC<EditFormProps> = ({ id, onClose, setUsers }) => {
               className=" bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
               type="submit"
             >
-              Edit
+              Create
             </Button>
           </div>
         </form>
       </div>
-    </PopupForm>
+      {/* </div> */}
+      {/* </div> */}
+    </PopUpForm>
   );
 };
 
-export default EditForm;
+export default AddUser;

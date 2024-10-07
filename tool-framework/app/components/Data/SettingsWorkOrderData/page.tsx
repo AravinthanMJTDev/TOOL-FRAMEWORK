@@ -192,8 +192,15 @@ const PartDataBase = [
   },
 ];
 
+const Departments = ["Admin", "Supervisor", "Manager"];
 const customerNames = ["aravinthan", "sri", "vaidu", "ananth", "amudhan"];
 const historyOfPart = ["w0-9", "w0-8", "wo-4"];
 
 export { columns, usersDB, statusFilterOptions };
-export { columnsForPart, PartDataBase, customerNames, historyOfPart };
+export {
+  columnsForPart,
+  PartDataBase,
+  customerNames,
+  historyOfPart,
+  Departments,
+};

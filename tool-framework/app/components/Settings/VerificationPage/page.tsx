@@ -2,6 +2,7 @@
 import { Button } from "@nextui-org/react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { UsersData } from "@/app/UsersData/page";
 
 const Page = () => {
   const [email, setEmail] = useState("");
@@ -12,7 +13,7 @@ const Page = () => {
     e.preventDefault();
 
     // Validate credentials
-    if (password === "123") {
+    if (password === UsersData.password) {
       // Redirect and pass data via query params
       router.push("/components/Settings");
     } else {

@@ -13,6 +13,7 @@ import {
 } from "../../../Data/SettingsWorkOrderData/page";
 import { partDB } from "../types";
 import PopupForm from "../../../PopUpFormTemplate/page";
+import { ChevronDown } from "lucide-react";
 
 interface EditFormProps {
   id: number;
@@ -26,7 +27,7 @@ const EditForm: React.FC<EditFormProps> = ({ id, onClose, setParts }) => {
     []
   ); // State for selected customer names
   const [selectedParts, setSelectedParts] = useState<string[]>([]);
-  console.log(parts);
+
   useEffect(() => {
     const foundParts = PartDataBase.find(
       (partsFromDb) => partsFromDb.id === id
@@ -47,20 +48,17 @@ const EditForm: React.FC<EditFormProps> = ({ id, onClose, setParts }) => {
 
   const handleSelectCustomerName = (selectedKeys: Set<string>) => {
     const namesArray = Array.from(selectedKeys);
-    console.log(namesArray);
     setSelectedCustomerNames(namesArray);
   };
 
   const handleSelectParts = (selectedKeys: Set<string>) => {
     const namesArray = Array.from(selectedKeys);
-    console.log(namesArray);
     setSelectedParts(namesArray);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (parts) {
-      console.log("selectedCustomerNames", selectedCustomerNames);
       const updatedPartsDB = PartDataBase.map((existingParts) =>
         existingParts.id === id
           ? {
@@ -71,83 +69,107 @@ const EditForm: React.FC<EditFormProps> = ({ id, onClose, setParts }) => {
             }
           : existingParts
       );
-      console.log("updatedPartsDB", updatedPartsDB);
       setParts(updatedPartsDB);
     }
     onClose();
   };
-  console.log("Form data submitted:", parts);
+
   if (!parts) {
     return null; // Prevent rendering if parts is null (loading state)
   }
 
   return (
     <PopupForm onClose={onClose} title={"Edit Parts"}>
-      <form onSubmit={handleSubmit} className="space-y-4 mt-5">
-        <div className="flex items-center">
-          <label className="w-1/3 text-right pr-4">Part No:</label>
-          <input
-            id="Part_No"
-            type="text"
-            className="w-2/3 border border-gray-300 p-2 rounded"
-            value={parts["Part_No"]}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="flex items-center">
-          <label className="w-1/3 text-right pr-4">Name:</label>
-          <input
-            id="name"
-            type="text"
-            className="w-2/3 border border-gray-300 p-2 rounded"
-            value={parts["name"]}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="flex items-center">
-          <label className="w-1/3 text-right pr-4">Manufacturing Date:</label>
-          <input
-            id="manufacturingDate"
-            type="date"
-            className="w-2/3 border border-gray-300 p-2 rounded"
-            value={parts.manufacturingDate}
-            onChange={handleChange}
-            required
-          />
-        </div>
+      <div className="max-h-[700px] overflow-y-auto">
+        <form onSubmit={handleSubmit} className="space-y-4 p-6">
+          {/* Part Number */}
+          <div className="flex flex-col ">
+            <label className="block text-md font-medium text-black">
+              Part No:
+            </label>
+            <input
+              id="Part_No"
+              type="text"
+              className="w-full border border-gray-300 p-1 rounded focus:ring-2 focus:ring-primary text-gray-500 text-sm"
+              value={parts["Part_No"]}
+              onChange={handleChange}
+              required
+            />
+          </div>
 
-        <div className="flex items-center">
-          <label className="w-1/3 text-right pr-4">Opening Shots:</label>
-          <input
-            id="openingShots"
-            type="number"
-            className="w-2/3 border border-gray-300 p-2 rounded"
-            value={parts["openingShots"]}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="flex items-center">
-          <label className="w-1/3 text-right pr-4">Total Shots:</label>
-          <input
-            id="totalShots"
-            type="number"
-            className="w-2/3 border border-gray-300 p-2 rounded"
-            value={parts["totalShots"]}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="flex items-center">
-          <label className="w-1/3 text-right pr-4">Customer Names:</label>
-          <div className="w-2/3 flex flex-col space-y-2">
+          {/* Name */}
+          <div className="flex flex-col ">
+            <label className="block text-md font-medium text-black">
+              Name:
+            </label>
+            <input
+              id="name"
+              type="text"
+              className="w-full border border-gray-300 p-1 rounded focus:ring-2 focus:ring-primary text-gray-500 text-sm"
+              value={parts["name"]}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          {/* Manufacturing Date */}
+          <div className="flex flex-col ">
+            <label className="block text-md font-medium text-black">
+              Manufacturing Date:
+            </label>
+            <input
+              id="manufacturingDate"
+              type="date"
+              className="w-full border border-gray-300 p-1 rounded focus:ring-2 focus:ring-primary text-gray-500 text-sm"
+              value={parts.manufacturingDate}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          {/* Opening Shots */}
+          <div className="flex flex-col ">
+            <label className="block text-md font-medium text-black">
+              Opening Shots:
+            </label>
+            <input
+              id="openingShots"
+              type="number"
+              className="w-full border border-gray-300 p-1 rounded focus:ring-2 focus:ring-primary text-gray-500 text-sm"
+              value={parts["openingShots"]}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          {/* Total Shots */}
+          <div className="flex flex-col ">
+            <label className="block text-md font-medium text-black">
+              Total Shots:
+            </label>
+            <input
+              id="totalShots"
+              type="number"
+              className="w-full border border-gray-300 p-1 rounded focus:ring-2 focus:ring-primary text-gray-500 text-sm"
+              value={parts["totalShots"]}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          {/* Customer Names */}
+          <div className="flex flex-col ">
+            <label className="block text-md font-medium text-black">
+              Customer Names:
+            </label>
             <Dropdown>
               <DropdownTrigger>
-                <p className=" border border-gray-300 p-2 rounded">
-                  Select Names
-                </p>
+                <div className="w-full flex justify-between border border-gray-300 p-1 rounded cursor-pointer text-gray-500 text-sm">
+                  {selectedCustomerNames
+                    ? selectedCustomerNames.join(",")
+                    : "Select Names"}
+                  <ChevronDown />
+                </div>
               </DropdownTrigger>
               <DropdownMenu
                 selectedKeys={selectedCustomerNames}
@@ -161,19 +183,23 @@ const EditForm: React.FC<EditFormProps> = ({ id, onClose, setParts }) => {
                 ))}
               </DropdownMenu>
             </Dropdown>
-            <div>
-              <p className="font-semibold">Selected Customers:</p>{" "}
-              {selectedCustomerNames.join(", ")}
-            </div>
+            {/* <div>
+              <p className="font-semibold text-xs">Selected Customers:</p>{" "}
+              <p>{selectedCustomerNames.join(", ")}</p>
+            </div> */}
           </div>
-        </div>
-        {/* Historty  */}
-        <div className="flex items-center">
-          <label className="w-1/3 text-right pr-4">History of Parts:</label>
-          <div className="w-2/3 flex flex-col space-y-2">
+
+          {/* History of Parts */}
+          <div className="flex flex-col ">
+            <label className="block text-md font-medium text-black">
+              History of Parts:
+            </label>
             <Dropdown>
               <DropdownTrigger>
-                <p className=" border border-gray-300 p-2 rounded">Parts</p>
+                <p className="w-full flex justify-between border border-gray-300 p-1 rounded cursor-pointer text-gray-500 text-sm">
+                  {selectedParts ? selectedParts.join(",") : "Select Parts"}{" "}
+                  <ChevronDown />
+                </p>
               </DropdownTrigger>
               <DropdownMenu
                 selectedKeys={selectedParts}
@@ -187,18 +213,20 @@ const EditForm: React.FC<EditFormProps> = ({ id, onClose, setParts }) => {
                 ))}
               </DropdownMenu>
             </Dropdown>
-            <div>
-              <p className="font-semibold">Selected Parts:</p>{" "}
-              {selectedParts.join(", ")}
-            </div>
+            {/* <div>
+              <p className="font-semibold text-xs">Selected Parts:</p>{" "}
+              <p>{selectedParts.join(", ")}</p>
+            </div> */}
           </div>
-        </div>
-        <div className="mt-6">
-          <Button type="submit" color="primary" className="w-full">
-            Save Changes
-          </Button>
-        </div>
-      </form>
+
+          {/* Submit Button */}
+          <div className="mt-6">
+            <Button type="submit" color="primary" className="w-full">
+              Save Changes
+            </Button>
+          </div>
+        </form>
+      </div>
     </PopupForm>
   );
 };

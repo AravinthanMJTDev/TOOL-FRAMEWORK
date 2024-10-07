@@ -14,6 +14,7 @@ import {
   DropdownMenu,
   DropdownItem,
   Selection,
+  Chip,
   SortDescriptor,
   Pagination,
 } from "@nextui-org/react";
@@ -22,14 +23,18 @@ import { columnsForPart } from "../../../Data/SettingsWorkOrderData/page";
 import {
   ChevronDownIcon,
   Ellipsis,
+  FileUp,
   Filter,
+  Import,
   Menu,
   PlusIcon,
   SearchIcon,
   Trash2Icon,
   X,
 } from "lucide-react";
-
+import * as XLSX from "xlsx";
+// import { saveAs } from "file-saver";
+// import { parse, unparse } from "papaparse";
 import { partDB } from "../types";
 import Part from "./addNewPart";
 import EditForm from "./EditForm";
@@ -69,9 +74,15 @@ export default function PartDashBoard({
   const [menuExpand, setMenuExpand] = useState(false);
   const [editForm, setEditForm] = useState<number>(0);
   const [showAll, setShowAll] = useState<boolean>(false);
+  const [importedData, setImportedData] = useState<partDB[]>([]);
   useEffect(() => {
     setParts(partDataBase);
   }, [partDataBase]);
+  useEffect(() => {
+    if (importedData.length) {
+      setParts(importedData);
+    }
+  }, [importedData]);
 
   const headerColumns = useMemo(() => {
     if (visibleColumns.has("all")) return columnsForPart;
@@ -122,17 +133,106 @@ export default function PartDashBoard({
     setSelectedKeys(new Set());
     setParts(newParts);
   }, [parts, selectedKeys]);
-  console.log("showAll:", showAll);
-  //handle toogle names
-  const handleToggle = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation();
-    console.log("Button clicked, current showAll:", showAll);
-    setShowAll((prev) => !prev);
+  // --------------------------------------------------------------------------EXPORT/IMPORT Excel format----------------------------------------------------------------------
+  // Handle Export
+  const convertListToString = (data) => {
+    return data.map((part) => ({
+      ...part,
+      customerName: part.customerName.join(", "), // Convert array to comma-separated string
+      historyOfPart: part.historyOfPart.join(","),
+    }));
+  };
+  const exportToExcel = (data, fileName) => {
+    const formattedData = convertListToString(data); // Convert arrays before exporting
+    const worksheet = XLSX.utils.json_to_sheet(formattedData); // Convert JSON data to Excel format
+    const workbook = XLSX.utils.book_new(); // Create a new workbook
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1"); // Add worksheet to workbook
+
+    XLSX.writeFile(workbook, `${fileName}.xlsx`); // Export the workbook
+  };
+
+  const handleExport = () => {
+    exportToExcel(parts, "PartsData");
+  };
+
+  // handle import
+  function convertDateAndFormat(dateStr) {
+    const date = new Date(dateStr);
+    console.log(date, " ", dateStr);
+    // Format to "yyyy-mm-dd"
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
+  }
+  const convertStringToArray = (data) => {
+    return data.map((part) => ({
+      ...part,
+      manufacturingDate: convertDateAndFormat(part.manufacturingDate),
+      customerName: part.customerName.split(",").map((name) => name.trim()), // Split string back into array
+      historyOfPart: part.historyOfPart
+        .split(",")
+        .map((history) => history.trim()),
+    }));
+  };
+  const importFromExcel = (event) => {
+    const file = event.target.files[0]; // Get the selected file
+    const reader = new FileReader();
+
+    reader.onload = (e) => {
+      const data = new Uint8Array(e.target.result); // Read file data
+      const workbook = XLSX.read(data, { type: "array" }); // Parse the Excel file
+
+      const sheetName = workbook.SheetNames[0]; // Get the first sheet
+      const worksheet = workbook.Sheets[sheetName]; // Get the worksheet
+      const importedData = XLSX.utils.sheet_to_json(worksheet, {
+        raw: false, //ensures that dates arent parsed as serial num
+        dateNF: "yyyy-mm-dd", // format date as string
+      }); // Convert worksheet to JSON
+      console.log("file", importedData);
+      const formatImportedData = convertStringToArray(importedData);
+      // Column verification
+      // Convert the sheet to JSON to work with the data
+      const sheetData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+      const headers = sheetData[0]; // The first row will contain the headers
+      const expectedHeaders = columnsForPart.map((column) => column.uid);
+      const isValid = expectedHeaders
+        .filter((header) => header !== "actions")
+        .every((header) => headers.includes(header));
+      if (isValid) {
+        setParts(formatImportedData);
+      } else {
+        alert("ivalid file");
+      }
+    };
+
+    reader.readAsArrayBuffer(file); // Read the file as an array buffer
+  };
+  const handleImport = (e) => {
+    importFromExcel(e);
+  };
+
+  //Remove name
+  const removeName = (id: number, value: string) => {
+    setParts((prevParts) =>
+      prevParts.map((part) => {
+        if (part.id === id) {
+          return {
+            ...part,
+            customerName: part.customerName.filter((name) => name !== value),
+          };
+        }
+        return part;
+      })
+    );
   };
 
   const renderCell = useCallback(
     (id: number, part: partDB, columnKey: React.Key) => {
       const cellValue = part[columnKey as keyof partDB];
+      console.log("cellValue:", cellValue);
+      console.log("cellValue type:", typeof cellValue);
 
       switch (columnKey) {
         case "Part_No":
@@ -159,34 +259,16 @@ export default function PartDashBoard({
           );
         case "customerName":
           return (
-            <div className="relative flex justify-start items-center gap-2 overflow-auto whitespace-nowrap">
-              {cellValue.length > 2 ? (
-                <>
-                  {cellValue.slice(0, 2).map((value, index) => (
-                    <p key={index} className="mr-1">
-                      {value}
-                      {index < cellValue.length - 1 ? "," : ""}
-                    </p>
-                  ))}
-                  <button onClick={handleToggle} className="mr-1 text-blue-500">
-                    ...
-                  </button>
-                  {showAll &&
-                    cellValue.slice(2).map((value, index) => (
-                      <p key={index + 2} className="mr-1">
-                        {value}
-                        {index < cellValue.length - 1 ? "," : ""}
-                      </p>
-                    ))}
-                </>
-              ) : (
-                cellValue.map((value, index) => (
-                  <p key={index} className="mr-1">
-                    {value}
-                    {index < cellValue.length - 1 ? "," : ""}
-                  </p>
-                ))
-              )}
+            <div className="flex gap-2">
+              {cellValue.map((value, index) => (
+                <Chip
+                  key={index}
+                  onClose={() => removeName(id, value)}
+                  variant="flat"
+                >
+                  {value}
+                </Chip>
+              ))}
             </div>
           );
         case "actions":
@@ -301,7 +383,7 @@ export default function PartDashBoard({
                 </Dropdown>
 
                 <Button onClick={() => setPopup(true)} className="w-full mt-2">
-                  Add New
+                  New
                 </Button>
                 <Button
                   onClick={handleDelete}
@@ -317,6 +399,20 @@ export default function PartDashBoard({
 
           {/* MEDIUM SCREEN CONTENT */}
           <div className="hidden sm:flex md:flex gap-3">
+            <Button as="label" htmlFor="import" variant="flat">
+              <input
+                id="import"
+                type="file"
+                accept=".xlsx, .xls"
+                onChange={handleImport}
+                className="hidden"
+              />
+              <Import />
+            </Button>
+
+            <Button onClick={handleExport} variant="flat">
+              <FileUp />
+            </Button>
             <Dropdown>
               <DropdownTrigger>
                 <Button
@@ -344,7 +440,7 @@ export default function PartDashBoard({
             </Dropdown>
 
             <Button endContent={<PlusIcon />} onClick={() => setPopup(true)}>
-              Add New
+              New
             </Button>
             <Button
               startContent={<Trash2Icon />}

@@ -4,7 +4,7 @@ import styles from "./styles";
 
 const Navigation = ({ className }: { className: string }) => {
   return (
-    <ul className={className}>
+    <ul id="navigationId" className={className}>
       <Link
         className={classNames(styles.linkContainer)}
         href="/components/DashBoard"
@@ -13,9 +13,9 @@ const Navigation = ({ className }: { className: string }) => {
       </Link>
       <Link
         className={classNames(styles.linkContainer)}
-        href="/components/WorkOrder"
+        href="/components/ToolRoom"
       >
-        <li>Workorder</li>
+        <li>Tool Room</li>
       </Link>
       <Link
         className={classNames(styles.linkContainer)}
@@ -36,12 +36,12 @@ const Navigation = ({ className }: { className: string }) => {
       >
         <li>Quality Approval</li>
       </Link>
-      <Link
+      {/* <Link
         className={classNames(styles.linkContainer)}
         href="/components/TotalRoom"
       >
         <li>Total Room</li>
-      </Link>
+      </Link> */}
 
       <Link
         className={classNames(styles.linkContainer)}

@@ -1,0 +1,111 @@
+/* $blue-gray 			    : #34495e;
+$blue-gray-darken 	: #2c3e50;
+$blue 				      : #3498db;
+$blue-darken 		    : #2980b9;
+$green 				      : #1abc9c;
+$green-darken 		  : #16a085; */
+
+.breadcrumb {
+  list-style: none;
+  display: inline-block;
+  padding: 0;
+  position: relative;
+}
+
+.breadcrumb li {
+  float: left;
+  background-color: #3498db;
+  text-align: center;
+  color: #fff;
+  height: 40px;
+  line-height: 40px;
+  padding: 0 10px;
+  margin-right: 23px;
+  position: relative;
+  cursor: pointer;
+}
+
+/* Styling for even child elements */
+.breadcrumb li:nth-child(even) {
+  background-color: #2980b9;
+}
+
+.breadcrumb li:nth-child(even):before {
+  border-color: #2980b9;
+  border-left-color: transparent;
+}
+
+.breadcrumb li:nth-child(even):after {
+  border-left-color: #2980b9;
+}
+
+/* First breadcrumb item styles */
+.breadcrumb li:first-child {
+  padding-left: 15px;
+  border-radius: 4px 0 0 4px;
+}
+
+.breadcrumb li:first-child:before {
+  border: none;
+}
+
+/* Last breadcrumb item styles */
+.breadcrumb li:last-child {
+  padding-right: 15px;
+  border-radius: 0 4px 4px 0;
+}
+
+.breadcrumb li:last-child:after {
+  border: none;
+}
+
+/* Common ::before and ::after for li */
+.breadcrumb li:before,
+.breadcrumb li:after {
+  content: "";
+  position: absolute;
+  top: 0;
+  border: 0 solid #3498db;
+  border-width: 20px 10px;
+  width: 0;
+  height: 0;
+}
+
+.breadcrumb li:before {
+  left: -20px;
+  border-left-color: transparent;
+}
+
+.breadcrumb li:after {
+  left: 100%;
+  border-color: transparent;
+  border-left-color: #3498db;
+}
+
+/* Hover effect */
+.breadcrumb li:hover {
+  background-color: #1abc9c;
+}
+
+.breadcrumb li:hover:before {
+  border-color: #1abc9c;
+  border-left-color: transparent;
+}
+
+.breadcrumb li:hover:after {
+  border-left-color: #1abc9c;
+}
+
+/* Active (clicked) state */
+.breadcrumb li:active {
+  background-color: #16a085;
+}
+
+.breadcrumb li:active:before {
+  border-color: #16a085;
+  border-left-color: transparent;
+}
+
+.breadcrumb li:active:after {
+  border-left-color: #16a085;
+}

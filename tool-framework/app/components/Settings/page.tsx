@@ -15,7 +15,7 @@ const Page = () => {
   const [users, setUsers] = useState([]);
   const [parts, setparts] = useState([]);
   const [activeTab, setActiveTab] = useState("table"); // Use a string for tab management
-  const [showPopup, setShowPopup] = useState(false); // Single boolean for managing popup visibility
+  // const [showPopup, setShowPopup] = useState(false);
 
   useEffect(() => {
     setUsers(usersDB);
@@ -24,7 +24,7 @@ const Page = () => {
 
   const handleTabClick = (tab: string) => {
     setActiveTab(tab);
-    setShowPopup(false); // Close popup on tab switch
+    // setShowPopup(false);
   };
 
   return (
@@ -38,17 +38,17 @@ const Page = () => {
                 className={classNames(styles.tabname)}
                 onClick={() => handleTabClick("table")}
               >
-                Table
+                User
               </p>
             </div>
-            <div className={classNames(styles.tab)}>
+            {/* <div className={classNames(styles.tab)}>
               <p
                 className={classNames(styles.tabname)}
                 onClick={() => setShowPopup(true)}
               >
                 User
               </p>
-            </div>
+            </div> */}
             <div className={classNames(styles.tab)}>
               <p
                 className={classNames(styles.tabname)}
@@ -85,9 +85,9 @@ const Page = () => {
         </div>
 
         {/* Conditional rendering for popup */}
-        {showPopup && (
+        {/* {showPopup && (
           <Popup onClose={() => setShowPopup(false)} setUsers={setUsers} />
-        )}
+        )} */}
       </div>
     </Main>
   );

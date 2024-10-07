@@ -14,6 +14,7 @@ import {
 } from "@/app/components/Data/SettingsWorkOrderData/page";
 import { partDB } from "../types";
 import { Dropdown } from "@nextui-org/react";
+import { ChevronDown } from "lucide-react";
 
 const Part: React.FC = ({
   onClose,
@@ -63,158 +64,203 @@ const Part: React.FC = ({
   };
 
   return (
-    <PopupForm onClose={onClose} title={"New Part"}>
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="flex items-center">
-          <label htmlFor="Part_No" className="w-1/3 text-right pr-4">
-            Part No:<span className="text-red-500"> *</span>
-          </label>
-          <input
-            id="Part_No"
-            type="number"
-            className="w-2/3 border border-gray-300 p-2 rounded"
-            value={formData.Part_No}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="flex items-center">
-          <label htmlFor="name" className="w-1/3 text-right pr-4">
-            Name:<span className="text-red-500"> *</span>
-          </label>
-          <input
-            id="name"
-            type="text"
-            className="w-2/3 border border-gray-300 p-2 rounded"
-            value={formData.name}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="flex items-center">
-          <label htmlFor="manufacturingDate" className="w-1/3 text-right pr-4">
-            Manufacturing Date:<span className="text-red-500"> *</span>
-          </label>
-          <input
-            id="manufacturingDate"
-            type="date"
-            className="w-2/3 border border-gray-300 p-2 rounded"
-            value={formData.manufacturingDate}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="flex items-center">
-          <label htmlFor="openingShots" className="w-1/3 text-right pr-4">
-            Opening Shots:<span className="text-red-500"> *</span>
-          </label>
-          <input
-            id="openingShots"
-            type="number"
-            className="w-2/3 border border-gray-300 p-2 rounded"
-            value={formData.openingShots}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="flex items-center">
-          <label htmlFor="totalShots" className="w-1/3 text-right pr-4">
-            Total Shots:<span className="text-red-500"> *</span>
-          </label>
-          <input
-            id="totalShots"
-            type="number"
-            className="w-2/3 border border-gray-300 p-2 rounded"
-            value={formData.totalShots}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="flex items-center">
-          <label htmlFor="customerName" className="w-1/3 text-right pr-4">
-            Customer Names:
-          </label>
-          <Dropdown>
-            <DropdownTrigger>
-              <p className="w-2/3 border border-gray-300 p-2 rounded">
-                Select Name
-              </p>
-            </DropdownTrigger>
-            <DropdownMenu
-              selectedKeys={selectedNames} //names as keys
-              selectionMode="multiple"
-              onSelectionChange={handleSelectName} // Handle selection change
+    <PopupForm title={"Create User"} onClose={onClose}>
+      <div className="max-h-[700px] overflow-y-auto">
+        {" "}
+        {/* Popup max height */}
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="mb-4">
+            <label
+              htmlFor="Part_No"
+              className="block text-md font-medium text-black"
             >
-              {customerNames.map((name) => (
-                <DropdownItem key={name} value={name}>
-                  {name}
-                </DropdownItem>
-              ))}
-            </DropdownMenu>
-          </Dropdown>
-        </div>
-        <div className="flex items-center">
-          <label htmlFor="historyOfPart" className="w-1/3 text-right pr-4">
-            History of Part:<span className="text-red-500"> *</span>
-          </label>
+              Part No:<span className="text-red-500"> *</span>
+            </label>
+            <input
+              id="Part_No"
+              type="number"
+              className="w-full p-1 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-gray-500 "
+              value={formData.Part_No}
+              onChange={handleChange}
+              required
+            />
+          </div>
 
-          <Dropdown>
-            <DropdownTrigger>
-              <p className="w-2/3 border border-gray-300 p-2 rounded">
-                Select Part
-              </p>
-            </DropdownTrigger>
-            <DropdownMenu
-              selectedKeys={selectedParts} //names as keys
-              selectionMode="multiple"
-              onSelectionChange={handleSelectPart} // Handle selection change
+          <div className="mb-4">
+            <label
+              htmlFor="name"
+              className="block text-md font-medium text-black"
             >
-              {historyOfPart.map((name) => (
-                <DropdownItem key={name} value={name}>
-                  {name}
-                </DropdownItem>
-              ))}
-            </DropdownMenu>
-          </Dropdown>
-        </div>
-        <div className="flex items-center">
-          <label
-            htmlFor="avgMeantimeBWFailure"
-            className="w-1/3 text-right pr-4"
-          >
-            Avg Meantime B/W Failure:<span className="text-red-500"> *</span>
-          </label>
-          <input
-            id="avgMeantimeBWFailure"
-            type="text"
-            className="w-2/3 border border-gray-300 p-2 rounded"
-            value={formData.avgMeantimeBWFailure}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="flex items-center">
-          <label htmlFor="totalCost" className="w-1/3 text-right pr-4">
-            Total Cost:<span className="text-red-500"> *</span>
-          </label>
-          <input
-            id="totalCost"
-            type="number"
-            className="w-2/3 border border-gray-300 p-2 rounded"
-            value={formData.totalCost}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="flex justify-center space-x-4">
-          <Button
-            type="submit"
-            className="bg-blue-600 text-white px-6 py-2 rounded"
-          >
-            Add
-          </Button>
-        </div>
-      </form>
+              Name:<span className="text-red-500"> *</span>
+            </label>
+            <input
+              id="name"
+              type="text"
+              className="w-full p-1 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-gray-500"
+              value={formData.name}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          <div className="mb-4">
+            <label
+              htmlFor="manufacturingDate"
+              className="block text-md font-medium text-black"
+            >
+              Manufacturing Date:<span className="text-red-500"> *</span>
+            </label>
+            <input
+              id="manufacturingDate"
+              type="date"
+              className="w-full p-1 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-gray-500"
+              value={formData.manufacturingDate}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          <div className="mb-4">
+            <label
+              htmlFor="openingShots"
+              className="block text-md font-medium text-black"
+            >
+              Opening Shots:<span className="text-red-500"> *</span>
+            </label>
+            <input
+              id="openingShots"
+              type="number"
+              className="w-full p-1 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-gray-500"
+              value={formData.openingShots}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          <div className="mb-4">
+            <label
+              htmlFor="totalShots"
+              className="block text-md font-medium text-black"
+            >
+              Total Shots:<span className="text-red-500"> *</span>
+            </label>
+            <input
+              id="totalShots"
+              type="number"
+              className="w-full p-1 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-gray-500"
+              value={formData.totalShots}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          <div className="mb-4">
+            <label
+              htmlFor="customerName"
+              className="block text-md font-medium text-black"
+            >
+              Customer Names:
+            </label>
+            <Dropdown>
+              <DropdownTrigger>
+                <div className="w-full flex p-1 border border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 rounded-md justify-between text-gray-500">
+                  {selectedNames.length
+                    ? selectedNames.join(",")
+                    : "Select Names"}{" "}
+                  <ChevronDown />
+                </div>
+              </DropdownTrigger>
+              <DropdownMenu
+                selectedKeys={selectedNames} //names as keys
+                selectionMode="multiple"
+                onSelectionChange={handleSelectName} // Handle selection change
+              >
+                {customerNames.map((name) => (
+                  <DropdownItem key={name} value={name}>
+                    {name}
+                  </DropdownItem>
+                ))}
+              </DropdownMenu>
+            </Dropdown>
+          </div>
+
+          <div className="mb-4">
+            <label
+              htmlFor="historyOfPart"
+              className="block text-md font-medium text-black"
+            >
+              History of Part:<span className="text-red-500"> *</span>
+            </label>
+            <Dropdown>
+              <DropdownTrigger>
+                <div className="w-full flex justify-between p-1 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-gray-500">
+                  {selectedParts.length
+                    ? selectedParts.join(",")
+                    : "Select Parts"}
+                  <ChevronDown />
+                </div>
+              </DropdownTrigger>
+              <DropdownMenu
+                selectedKeys={selectedParts} //names as keys
+                selectionMode="multiple"
+                onSelectionChange={handleSelectPart} // Handle selection change
+              >
+                {historyOfPart.map((name) => (
+                  <DropdownItem key={name} value={name}>
+                    {name}
+                  </DropdownItem>
+                ))}
+              </DropdownMenu>
+            </Dropdown>
+          </div>
+
+          <div className="mb-4">
+            <label
+              htmlFor="avgMeantimBWFailure"
+              className="block text-md font-medium text-black"
+            >
+              Avg Meantime B/W Failure:<span className="text-red-500"> *</span>
+            </label>
+            <input
+              id="avgMeantimeBWFailure"
+              type="text"
+              className="w-full p-1 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-gray-500"
+              value={formData.avgMeantimeBWFailure}
+              onChange={handleChange}
+              required
+            />
+          </div>
+
+          <div className="mb-4">
+            <label
+              htmlFor="totalCost"
+              className="block text-md font-medium text-black"
+            >
+              Total Cost:<span className="text-red-500"> *</span>
+            </label>
+            <div className="flex items-center space-x-4">
+              <input
+                id="totalCost"
+                type="number"
+                className="w-full p-1 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-gray-500"
+                value={formData.totalCost}
+                onChange={handleChange}
+                required
+              />
+            </div>
+          </div>
+
+          {/* Submit */}
+          <div className="text-center">
+            <Button
+              className=" bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
+              type="submit"
+            >
+              Create
+            </Button>
+          </div>
+        </form>
+      </div>
     </PopupForm>
   );
 };
